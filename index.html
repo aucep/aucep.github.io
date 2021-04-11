@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset='utf-8'>
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title></title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-  <script src='main.js' defer></script>
+  <link rel='stylesheet' type='text/css' media='screen' href='mane.css'>
+  <script src='sbs2-markup/highlight.js' defer></script>
+  <script src='sbs2-markup/parse.js' defer></script>
+  <script src='sbs2-markup/render.js' defer></script>
+  <script src='mane.js' defer></script>
 </head>
+
 <body>
   <h1>auceps!</h1>
-  i would put more here, but...
+  i would put more here, but...<br />
+  <noscript>yeah you'll need js, i'm not figuring out how to preprocess 12y with github workflows</noscript>
+  <div id=controls>
+    <label>choose a page:
+      <select id=chooser disabled><option>loading</option></select>
+    </label>
+    <button id=load-button disabled>load page</button>
+  </div>
+  <div id=content>nothing loaded yet</div>
 </body>
+
 </html>
