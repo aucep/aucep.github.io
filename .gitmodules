@@ -1,0 +1,3 @@
+[submodule "written"]
+	path = written
+	url = https://github.com/aucep/written
