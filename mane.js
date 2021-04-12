@@ -8,8 +8,14 @@ contentPane.style.display = ""; //aforementioned unhide
 const content = $("content");
 //loads the content (duh)
 content.load = async function (url) {
-  //make sure this is a bona fide url
-  if (!url.startsWith('https://')) url = "https://raw.githubusercontent.com/aucep/written/main/"+url;
+  if (!url.startsWith("https://")) {//from history
+    url = "https://raw.githubusercontent.com/aucep/written/main/" + url;
+  } else {//from chooser
+    //push new history
+    newHistory(
+      url.replace("https://raw.githubusercontent.com/aucep/written/main/", "")
+    );
+  }
 
   content.textContent = "loading";
 
@@ -36,10 +42,10 @@ chooserPathInput.value = "";
 
 //go up one, if possible
 function loadParentDir() {
-  let path = openDir.textContent;
-  if (path.trim() == "(root)") return;
+  let path = openDir.textContent.trim();
+  if (path == "(root)") return;
   path = path.split("/");
-  chooser.load(path.slice(0, path.length - 1));
+  chooser.load(path.slice(0, path.length - 1).join("/"));
 }
 
 //el shows errors for loading
@@ -75,13 +81,13 @@ function loadFile(e) {
   //don't load something that's already loaded
   if (o.classList.contains("chosen")) return;
 
-  //load
+  //load!!
   content.load(o.path);
 
   //clear other chosen and set this as chosen
-  Array.from(o.parentNode.children).forEach((o) =>
-    o.classList.remove("chosen")
-  );
+  o.parentNode
+    .querySelectorAll(".chosen")
+    .forEach((o) => o.classList.remove("chosen"));
   o.classList.add("chosen");
 }
 
@@ -124,9 +130,12 @@ const openDir = $("open-dir");
 
 //el holds the directories and files
 const chooser = $("frame");
-chooser.load = async function (path) {
+chooser.load = async function (path, fromHistory) {
   //chooserInfo.textContent = "loading dir";
   //removed this because it was just annoying
+
+  //push to history
+  if (!fromHistory) newHistory(path == "" ? "" : path+'/');
 
   const resp = await fetch(
     "https://api.github.com/repos/aucep/written/contents/" + path
@@ -162,24 +171,66 @@ chooser.load = async function (path) {
 };
 
 //handle query string
-let query = window.location.search;
-if (query == "") chooser.load("");//empty... you disappoint me
-else {//now THAT's what i'm talking about!
-  query = query.replace(/\?\/|\?/,'');
-  query = query.split("/");
-  const last = query[query.length - 1];
-  if (last) content.load(query.join('/'));
-  if (query.length > 1) chooser.load(query.slice(0,query.length-1).join('/'));
+async function loadFromQueryString() {
+  let query = window.location.search;
+  if (query == "") chooser.load("");
+  //empty... you disappoint me
+  else {
+    //now THAT's what i'm talking about!
+    //remove ?/ or ?
+    query = query.replace(/\?\/|\?/, "");
+    query = query.split("/");
+    const last = query[query.length - 1];
+    if (last) content.load(query.join("/")); //if this is a file, load it
+    //load directory regardless
+    const path = query.length > 1 ? query.slice(0, query.length - 1).join("/") : "";
+    await chooser.load(path, true);
+    chooserPathInput.value = path;
+
+    //update chosen
+    chooserFiles
+      .querySelectorAll(".chosen")
+      .forEach((o) => o.classList.remove("chosen"));
+      print(chooserFiles.children)
+    for (let file of chooserFiles.children) {
+      print(file);
+      print('yeah');
+      print(file.lastElementChild.textContent);
+      if (
+        file.lastElementChild.textContent == last &&
+        !file.classList.contains("chosen")
+      ) {
+        file.classList.add("chosen");
+        break;
+      }
+    }
+  }
 }
 
+//navigation
+
+//push a new history
+function newHistory(path) {
+  history.pushState(
+    null,
+    "",
+    window.location.origin + window.location.pathname + "?/" + path
+  );
+}
+window.onpopstate = loadFromQueryString;
+
+//shorter stuff
 function print() {
   console.log(...arguments);
   return arguments;
 }
-
 function $(id) {
   return document.getElementById(id);
 }
+/*
 function $$(q) {
   return document.querySelector(q);
-}
+}/*ok this is bullshit who closes their comments*/
+
+//fuckin finally
+loadFromQueryString();
