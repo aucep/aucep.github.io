@@ -1,7 +1,7 @@
 "use strict";
 
-const contentPane = $('content-pane');
-contentPane.style.display = '';
+const contentPane = $("content-pane");
+contentPane.style.display = "";
 
 const content = $("content");
 content.load = async function (url) {
@@ -21,7 +21,7 @@ content.load = async function (url) {
 };
 
 const chooserPathInput = $("path-input");
-chooserPathInput.value = '';
+chooserPathInput.value = "";
 
 const chooserInfo = $("info");
 
@@ -72,15 +72,15 @@ chooserDirs.populate = function (dirs) {
 function loadDir(e) {
   const o = e.currentTarget;
   let path;
-  if (o.tagName == 'BUTTON') {
-    path = chooserPathInput.value ?? '';
+  if (o.tagName == "BUTTON") {
+    path = chooserPathInput.value ?? "";
   } else {
     path = chooserPathInput.value = o.path;
   }
   chooser.load(path);
 }
 
-const openDir = $('open-dir');
+const openDir = $("open-dir");
 
 const chooser = $("frame");
 chooser.load = async function (path) {
@@ -101,25 +101,25 @@ chooser.load = async function (path) {
   const dirs = dirContents.filter((f) => f.type == "dir");
   chooserDirs.populate(dirs);
 
-  const openDirSpan = openDir.querySelector('span');
+  const openDirSpan = openDir.querySelector("span");
   if (path == "") {
-    if (!openDir.classList.contains('root')) openDir.classList.add('root');
+    if (!openDir.classList.contains("root")) openDir.classList.add("root");
     openDirSpan.textContent = "(root)";
   } else {
-    openDir.classList.remove('root');
+    openDir.classList.remove("root");
     openDirSpan.textContent = path;
   }
 
   chooserInfo.textContent = "";
 };
 
-chooser.load('');
+chooser.load("");
 
 function loadParentDir() {
   let path = openDir.textContent;
-  if (path == "(root)") return;
-  path = path.split('/');
-  chooser.load(path.slice(0,path.length-1));
+  if (path.trim() == "(root)") return;
+  path = path.split("/");
+  chooser.load(path.slice(0, path.length - 1));
 }
 
 function print() {
