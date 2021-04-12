@@ -15,17 +15,22 @@
     <script src="https://kit.fontawesome.com/4bf6b60cc1.js" crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body class=col>
     <header>
-        <h1>auceps!</h1>
+        <div>
+            <h1>auceps!</h1>
+            <a href="https://github.com/aucep">github</a>
+            <a href="https://www.fimfiction.net/user/394163/auceps">fimfic</a>
+        </div>
         <span id=motd-or-something>i would put more here, but...</span>
+
     </header>
     <mane>
         <!--you thought i wouldn't fuckin do it??-->
 
         <noscript>yeah you'll need js, i'm not figuring out how to preprocess 12y with github workflows</noscript>
         <div id=content-pane style=display:none>
-            <div id=chooser>
+            <div id=chooser class=col>
                 <div id=path>
                     <input type=text id=path-input />
                     <button id=path-button onclick="loadDir(arguments[0])">nav</button>
