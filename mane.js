@@ -191,11 +191,7 @@ async function loadFromQueryString() {
     chooserFiles
       .querySelectorAll(".chosen")
       .forEach((o) => o.classList.remove("chosen"));
-      print(chooserFiles.children)
     for (let file of chooserFiles.children) {
-      print(file);
-      print('yeah');
-      print(file.lastElementChild.textContent);
       if (
         file.lastElementChild.textContent == last &&
         !file.classList.contains("chosen")
