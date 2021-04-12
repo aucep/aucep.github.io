@@ -18,7 +18,7 @@
 <body>
     <header>
         <h1>auceps!</h1>
-        i would put more here, but...
+        <span id=motd-or-something>i would put more here, but...</span>
     </header>
     <mane>
         <!--you thought i wouldn't fuckin do it??-->
@@ -30,7 +30,6 @@
                     <input type=text id=path-input />
                     <button id=path-button onclick="loadDir(arguments[0])">nav</button>
                 </div>
-                <div id=info></div>
                 <div id=frame class='simple-border'>
                     <div id=open-dir class='option root' onclick="loadParentDir()">
                         <i class="fas fa-folder-open fa-fw"></i>
@@ -52,6 +51,7 @@
                         </div>
                     </template>
                 </div>
+                <div id=info></div>
             </div>
             <div id=content class='simple-border markup-root'>choose a file</div>
         </div>
