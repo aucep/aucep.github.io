@@ -45,11 +45,21 @@
                             <i class="fas fa-folder fa-fw"></i><span></span>
                         </div>
                     </template>
+                    <template id=no-dirs-template>
+                        <div class=none>
+                            <i class="fas fa-th-list fa-fw"></i><span>no dirs</span>
+                        </div>
+                    </template>
 
                     <div id=files></div>
                     <template id=file-template>
                         <div class=option onclick="loadFile(arguments[0])">
                             <i class="fas fa-file-alt fa-fw"></i><span></span>
+                        </div>
+                    </template>
+                    <template id=no-files-template>
+                        <div class=none>
+                            <i class="fas fa-th-list fa-fw"></i><span>no files</span>
                         </div>
                     </template>
                 </div>

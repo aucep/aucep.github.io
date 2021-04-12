@@ -51,12 +51,17 @@ const chooserInfo = $("info");
 const chooserFiles = $("files");
 //fill the el with clickable options
 chooserFiles.populate = function (files) {
+  //clear current files
+  while (this.lastChild) this.removeChild(this.lastChild);
+
   //no files check
-  if (files.length == 0) this.textContent = "no files";
+  if (files.length == 0) {
+    const template = $("no-files-template");
+  const noFiles = template.content.firstElementChild.cloneNode(true);
+  this.append(noFiles);
+}
   else {
     //hey! there's files.
-    //clear current files
-    while (this.lastChild) this.removeChild(this.lastChild);
 
     const template = $("file-template");
 
@@ -91,12 +96,17 @@ function loadFile(e) {
 const chooserDirs = $("dirs");
 //fill the el with clickable options
 chooserDirs.populate = function (dirs) {
+  //clear out current dirs
+  while (this.lastChild) this.removeChild(this.lastChild);
+
   //no dirs check
-  if (dirs.length == 0) this.textContent = "no dirs";
-  else {
+  if (dirs.length == 0) {
+    const template = $("no-dirs-template");
+    const noDirs = template.content.firstElementChild.cloneNode(true);
+    this.append(noDirs);
+  } else {
     //wow... dirs... what a surprise
-    //clear out current dirs
-    while (this.lastChild) this.removeChild(this.lastChild);
+    
 
     const template = $("dir-template");
 
