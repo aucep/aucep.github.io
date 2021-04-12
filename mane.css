@@ -1,40 +1,33 @@
 /* yeah i'm sorry you had to see this */
 html {
-    font-variant-ligatures: none;
+    font-variant-ligatures: none
 }
 
 h1 {
-    margin: 0;
+    margin: 0
 }
 
-
-.flex-row {
+.flex {
     display: flex;
     gap: 8px;
-}
-
-header .flex-row>*:not(:first-child) {
-    padding-left: 5px;
-}
-
-
-body {
-    gap: 8px;
-}
-
-.col>a {
-    text-align: right;
 }
 
 .col {
+    flex-direction: column
+}
 
-    display: flex;
-    flex-direction: column;
+.grow {
+    flex-grow: 1
+}
+
+#links>a {
+    padding-left: 5px
 }
 
 #chooser {
-    min-width: 200px;
-    max-width: 200px;
+    /*min-width: 200px;
+    max-width: 200px;*/
+    width: 200px;
 }
 
 @media (max-width:700px) {
@@ -43,28 +36,22 @@ body {
     }
 
     #chooser {
-        min-width: 100%;
-        max-width: 100%;
+        /*min-width: 100%;
+        max-width: 100%;*/
+        width: 100%
+    }
+
+    #chooser>div>* {
+        font-size: 1.6em;
     }
 }
 
-
-
 #info:empty {
-    display: none;
+    display: none
 }
 
-.simple-border {
+.border {
     border: 1px solid black;
-}
-
-#content-pane {
-    display: flex;
-    gap: 8px;
-}
-
-#content {
-    flex-grow: 1;
 }
 
 #dirs {
@@ -99,10 +86,6 @@ body {
     display: flex;
 }
 
-#open-dir>span {
-    flex-grow: 1;
-}
-
 .fa,
 .fas {
     margin-top: auto;
@@ -110,8 +93,7 @@ body {
 }
 
 .fa-level-up-alt {
-    padding-left: 2px;
-    padding-right: 2px;
+    padding: 0 2px;
 }
 
 .root>.fa-level-up-alt {
@@ -120,8 +102,4 @@ body {
 
 .fa-fw {
     width: 1.5em !important;
-}
-
-input[type='text'] {
-    margin: 0;
 }

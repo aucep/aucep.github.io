@@ -123,12 +123,12 @@ const openDir = $("open-dir");
 
 //el holds the directories and files
 const chooser = $("chooser");
-chooser.load = async function (path, fromHistory) {
+chooser.load = async function (path, noHistory) {
   //chooserInfo.textContent = "loading dir";
   //removed this because it was just annoying
 
   //push to history
-  if (!fromHistory) newHistory(path == "" ? "" : path+'/');
+  if (!noHistory) newHistory(path == "" ? "" : path+'/');
 
   const resp = await fetch(
     "https://api.github.com/repos/aucep/written/contents/" + path
@@ -165,8 +165,8 @@ chooser.load = async function (path, fromHistory) {
 
 //handle query string
 async function loadFromQueryString() {
-  let query = window.location.search;
-  if (query == "") chooser.load("");
+  let query = location.search;
+  if (query == "") chooser.load("",true);
   //empty... you disappoint me
   else {
     //now THAT's what i'm talking about!

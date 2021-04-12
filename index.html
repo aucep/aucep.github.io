@@ -15,52 +15,47 @@
     <script src="https://kit.fontawesome.com/4bf6b60cc1.js" crossorigin="anonymous"></script>
 </head>
 
-<body class=col>
-    <header class=flex-row>
+<body class="flex col">
+    <header class=flex>
         <div style=max-height:min-content>
-            <div class=flex-row>
+            <div id=links class=flex>
                 <h1>auceps!</h1>
                 <a href="https://github.com/aucep">github</a>
                 <a href="https://www.fimfiction.net/user/394163/auceps">fimfic</a>
             </div>
             <span id=motd-or-something>i would put more here, but...</span>
         </div>
-        <img id=avatar src="luna_stifle.jpeg" alt="princess luna with a hoof over her mouth">
-        <!--i hate this-->
-        <script>
-            const avatar = document.getElementById("avatar");
-            const sibling = avatar.parentElement.firstElementChild;
-            avatar.style.height = sibling.clientHeight + "px";
-        </script>
     </header>
     <mane>
         <!--you thought i wouldn't fuckin do it??-->
 
         <noscript>yeah you'll need js, i'm not figuring out how to preprocess 12y with github workflows</noscript>
-        <div id=content-pane style=display:none>
-            <div id=chooser class='simple-border'>
-                <div id=open-dir class='option root' onclick="loadParentDir()">
-                    <i class="fas fa-folder-open fa-fw"></i>
-                    <span>(root)</span>
-                    <i class="fas fa-level-up-alt"></i>
+        <div id=content-pane class=flex style=display:none>
+            <div>
+                <div id=chooser class=border>
+                    <div id=open-dir class='option root' onclick="loadParentDir()">
+                        <i class="fas fa-folder-open fa-fw"></i>
+                        <span class=grow>(root)</span>
+                        <i class="fas fa-level-up-alt"></i>
+                    </div>
+
+                    <div id=dirs></div>
+                    <template id=dir-template>
+                        <div class=option onclick="loadDir(arguments[0])">
+                            <i class="fas fa-folder fa-fw"></i><span></span>
+                        </div>
+                    </template>
+
+                    <div id=files></div>
+                    <template id=file-template>
+                        <div class=option onclick="loadFile(arguments[0])">
+                            <i class="fas fa-file-alt fa-fw"></i><span></span>
+                        </div>
+                    </template>
                 </div>
-
-                <div id=dirs></div>
-                <template id=dir-template>
-                    <div class=option onclick="loadDir(arguments[0])">
-                        <i class="fas fa-folder fa-fw"></i><span></span>
-                    </div>
-                </template>
-
-                <div id=files></div>
-                <template id=file-template>
-                    <div class=option onclick="loadFile(arguments[0])">
-                        <i class="fas fa-file-alt fa-fw"></i><span></span>
-                    </div>
-                </template>
+                <div id=info></div>
             </div>
-            <div id=info></div>
-            <div id=content class='simple-border markup-root'>choose a file</div>
+            <div id=content class='border grow markup-root'>choose a file</div>
         </div>
 
     </mane>
