@@ -1,3 +1,104 @@
+/* yeah i'm sorry you had to see this */
+html {
+    font-variant-ligatures: none;
+}
+
+h1 {
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+@media (max-width:700px) {
+    #content-pane {
+        flex-direction: column;
+    }
+}
+
+#chooser {
+    min-width: -moz-fit-content;
+    min-width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#info:empty {
+    display: none;
+}
+
+.simple-border {
+    border: 1px solid black;
+}
+
+#content-pane {
+    display: flex;
+    gap: 8px;
+}
+
 #content {
-  border: 1px solid black;
+    flex-grow: 1;
+}
+
+#dirs {
+    border-bottom: 1px dashed black;
+}
+
+.option:nth-child(2n+1) {
+    background-color: #11111111;
+}
+
+.option:nth-child(2n) {
+    background-color: #33333333;
+}
+
+.option:hover:not(.root) {
+    background-color: lightskyblue;
+    cursor: pointer;
+}
+
+.option.chosen {
+    text-align: center;
+    background-color: paleturquoise;
+    text-decoration-line: underline;
+}
+
+.option.chosen:hover {
+    cursor: default;
+}
+
+#open-dir {
+    border-bottom: 1px solid black;
+    display: flex;
+}
+
+#open-dir>span {
+    flex-grow: 1;
+}
+
+.fa,
+.fas {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.fa-level-up-alt {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.root>.fa-level-up-alt {
+    display: none;
+}
+
+.fa-fw {
+    width: 1.5em !important;
+}
+
+input[type='text'] {
+    margin: 0;
 }
