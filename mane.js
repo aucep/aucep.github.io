@@ -36,10 +36,6 @@ content.load = async function (url) {
   this.appendChild(page);
 };
 
-//el for fast nav if you know the path
-const chooserPathInput = $("path-input");
-chooserPathInput.value = "";
-
 //go up one, if possible
 function loadParentDir() {
   let path = openDir.textContent.trim();
@@ -118,10 +114,7 @@ chooserDirs.populate = function (dirs) {
 function loadDir(e) {
   //same o same o
   const o = e.currentTarget;
-  const path =
-    o.tagName == "BUTTON"
-      ? chooserPathInput.value ?? "" //YEAH WE COULD BE COMING FROM THE NAV BUTTON
-      : (chooserPathInput.value = o.path); //or just from a directory option ;w;
+  const path = o.path;
   chooser.load(path);
 }
 
@@ -129,7 +122,7 @@ function loadDir(e) {
 const openDir = $("open-dir");
 
 //el holds the directories and files
-const chooser = $("frame");
+const chooser = $("chooser");
 chooser.load = async function (path, fromHistory) {
   //chooserInfo.textContent = "loading dir";
   //removed this because it was just annoying
@@ -185,7 +178,6 @@ async function loadFromQueryString() {
     //load directory regardless
     const path = query.length > 1 ? query.slice(0, query.length - 1).join("/") : "";
     await chooser.load(path, true);
-    chooserPathInput.value = path;
 
     //update chosen
     chooserFiles

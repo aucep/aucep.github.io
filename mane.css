@@ -7,14 +7,16 @@ h1 {
     margin: 0;
 }
 
-header>div {
-    display: flex;
 
+.flex-row {
+    display: flex;
+    gap: 8px;
 }
 
-header>div>*:not(:first-child) {
+header .flex-row>*:not(:first-child) {
     padding-left: 5px;
 }
+
 
 body {
     gap: 8px;
@@ -30,17 +32,23 @@ body {
     flex-direction: column;
 }
 
+#chooser {
+    min-width: 200px;
+    max-width: 200px;
+}
+
 @media (max-width:700px) {
     #content-pane {
         flex-direction: column;
     }
+
+    #chooser {
+        min-width: 100%;
+        max-width: 100%;
+    }
 }
 
-#chooser {
-    min-width: -moz-fit-content;
-    min-width: fit-content;
-    gap: 8px;
-}
+
 
 #info:empty {
     display: none;
