@@ -3,6 +3,11 @@ html {
     font-variant-ligatures: none
 }
 
+body {
+    overflow-y: scroll;
+    overflow-x: auto;
+}
+
 h1 {
     margin: 0
 }
@@ -24,10 +29,8 @@ h1 {
     padding-left: 5px
 }
 
-#chooser {
-    /*min-width: 200px;
-    max-width: 200px;*/
-    width: 200px;
+#left {
+    min-width: 25%;
 }
 
 @media (max-width:700px) {
@@ -35,8 +38,11 @@ h1 {
         flex-direction: column;
     }
 
-    #chooser {
+    #left {
         width: 100%;
+    }
+
+    #chooser {
         font-size: 1.6em;
     }
 }
@@ -97,4 +103,8 @@ h1 {
 
 .fa-fw {
     width: 1.5em !important;
+}
+
+#open-dir-label {
+    min-width: 0
 }

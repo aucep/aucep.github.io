@@ -31,11 +31,11 @@
 
         <noscript>yeah you'll need js, i'm not figuring out how to preprocess 12y with github workflows</noscript>
         <div id=content-pane class=flex style=display:none>
-            <div>
+            <div id=left>
                 <div id=chooser class=border>
                     <div id=open-dir class='option root' onclick="loadParentDir()">
                         <i class="fas fa-folder-open fa-fw"></i>
-                        <span class=grow>(root)</span>
+                        <div id=open-dir-label class=grow>(root)</div>
                         <i class="fas fa-level-up-alt"></i>
                     </div>
 

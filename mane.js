@@ -1,234 +1,240 @@
 "use strict";
 
-//just to unhide (prettier for no-js error msg)
+//this element contains the entire dynamic portion of the site, so it has to be unhidden
 const contentPane = $("content-pane");
 contentPane.style.display = ""; //aforementioned unhide
 
-//el shows the rendered content
+/*=================:
+:      CONTENT     :
+:=================*/
+
+//pane to the right that shows the rendered content
+//manipulated by chooserFiles options
 const content = $("content");
 //loads the content (duh)
-content.load = async function (url) {
-  if (!url.startsWith("https://")) {//from history
-    url = "https://raw.githubusercontent.com/aucep/written/main/" + url;
-  } else {//from chooser
-    //push new history
-    newHistory(
-      url.replace("https://raw.githubusercontent.com/aucep/written/main/", "")
-    );
-  }
+content.load = async function(url) {
+    //have to 
+    if (!url.startsWith("https://")) {
+        //from loadQueryPath, so url passed is 
+        url = "https://raw.githubusercontent.com/aucep/written/main/" + url;
+    } else {
+        newHistory(
+            url.replace("https://raw.githubusercontent.com/aucep/written/main/", "")
+        );
+    }
 
-  content.textContent = "loading";
+    content.textContent = "loading";
 
-  const resp = await fetch(url);
+    const resp = await fetch(url);
 
-  //world's shittiest error handling
-  if (!resp.ok) {
-    this.textContent = "failed";
-    return;
-  }
+    //world's shittiest error handling
+    if (!resp.ok) {
+        this.textContent = "failed";
+        return;
+    }
 
-  this.raw = await resp.text();
-  //have to clear the textContent because it doesn't disappear on its own
-  content.textContent = "";
+    this.raw = await resp.text();
+    //have to clear the textContent because it doesn't disappear on its own
+    content.textContent = "";
 
-  const page = Parse.parseLang(this.raw, "12y");
+    const page = Parse.parseLang(this.raw, "12y");
 
-  this.appendChild(page);
+    this.appendChild(page);
 };
 
-//go up one, if possible
-function loadParentDir() {
-  let path = openDir.textContent.trim();
-  if (path == "(root)") return;
-  path = path.split("/");
-  chooser.load(path.slice(0, path.length - 1).join("/"));
-}
 
-//el shows errors for loading
+/*=================:
+:      CHOOSER     :
+:=================*/
+
+//pane on the left for navigation
+//manipulated by openDir, chooserDirs options
+//fills openDir, chooserDirs, chooserFiles
+const chooser = $("chooser");
+//load path into chooser
+chooser.load = async function(path, noHistory) {
+    //push to history
+    if (!noHistory) newHistory(path == "" ? "" : path + '/');
+
+    const resp = await fetch(
+        "https://api.github.com/repos/aucep/written/contents/" + path
+    );
+
+    //error handling (i wonder if this even catches anything)
+    //still not worth using promise syntax
+    if (!resp.ok) {
+        chooserInfo.textContent = "could not load dir";
+        return;
+    }
+
+    //to json
+    const dirContents = await resp.json();
+
+    //filter and fill
+    const files = dirContents.filter((f) => f.type == "file");
+    chooserFiles.populate(files);
+    const dirs = dirContents.filter((f) => f.type == "dir");
+    chooserDirs.populate(dirs);
+
+    //update open-dir label
+    if (path == "") {
+        if (!openDir.classList.contains("root")) openDir.classList.add("root");
+        openDirLabel.textContent = "(root)";
+    } else {
+        openDir.classList.remove("root");
+        openDirLabel.textContent = path;
+    }
+
+    chooserInfo.textContent = "";
+};
+
+//shows which dir is currently open
+const openDir = $("open-dir");
+const openDirLabel = $('open-dir-label');
+
+//shows loading errors
 const chooserInfo = $("info");
 
-//el holds the files in chooser
-const chooserFiles = $("files");
-//fill the el with clickable options
-chooserFiles.populate = function (files) {
-  //clear current files
-  while (this.lastChild) this.removeChild(this.lastChild);
-
-  //no files check
-  if (files.length == 0) {
-    const template = $("no-files-template");
-  const noFiles = template.content.firstElementChild.cloneNode(true);
-  this.append(noFiles);
-}
-  else {
-    //hey! there's files.
-
-    const template = $("file-template");
-
-    files.forEach((f) => {
-      //fill out the template
-      const option = template.content.firstElementChild.cloneNode(true);
-      option.lastElementChild.textContent = f.name;
-      option.path = f.download_url;
-      this.append(option);
-    });
-  }
-};
-//load the file into the content el
-function loadFile(e) {
-  //i think o stands for 'option' but i'm not sure
-  const o = e.currentTarget;
-
-  //don't load something that's already loaded
-  if (o.classList.contains("chosen")) return;
-
-  //load!!
-  content.load(o.path);
-
-  //clear other chosen and set this as chosen
-  o.parentNode
-    .querySelectorAll(".chosen")
-    .forEach((o) => o.classList.remove("chosen"));
-  o.classList.add("chosen");
-}
-
-//el holds the directories in chooser
+//holds directory options
 const chooserDirs = $("dirs");
-//fill the el with clickable options
-chooserDirs.populate = function (dirs) {
-  //clear out current dirs
-  while (this.lastChild) this.removeChild(this.lastChild);
+chooserDirs.populate = Populator(chooserDirs, "dir-template", "no-dirs-template", "path");
 
-  //no dirs check
-  if (dirs.length == 0) {
-    const template = $("no-dirs-template");
-    const noDirs = template.content.firstElementChild.cloneNode(true);
-    this.append(noDirs);
-  } else {
-    //wow... dirs... what a surprise
-    
-
-    const template = $("dir-template");
-
-    dirs.forEach((d) => {
-      //fill out template
-      const option = template.content.firstElementChild.cloneNode(true);
-      option.lastElementChild.textContent = d.name;
-      option.path = d.path;
-      this.append(option);
-    });
-  }
+//holds file options
+const chooserFiles = $("files");
+chooserFiles.populate = Populator(chooserFiles, "file-template", "no-files-template", "download_url");
+chooserFiles.removeChosen = function() {
+    this.querySelectorAll(".chosen")
+        .forEach((o) => o.classList.remove("chosen"));
 };
 
-//load the directory into the chooser
+//creates a populate function
+function Populator(el, templateId, noneTemplateId, pathAttr) {
+    return function(options) {
+        //clear current options
+        removeChildrenOf(el);
+
+        //no options check
+        if (options.length == 0) {
+            const template = $(noneTemplateId);
+            const none = template.content.firstElementChild.cloneNode(true);
+            el.append(none);
+        } else {
+            const template = $(templateId);
+            options.forEach((o) => {
+                //fill out the template
+                const option = template.content.firstElementChild.cloneNode(true);
+                option.lastElementChild.textContent = o.name;
+                option.path = o[pathAttr];
+                el.append(option);
+            });
+        }
+    };
+}
+
+//to go back in browser history
+window.onpopstate = loadQueryPath;
+
+/*=================:
+:    NAVIGATION    :
+:=================*/
+//nav functions attached to elements directly in the HTML
+
+//attached to #open-dir
+function loadParentDir() {
+    let path = openDir.textContent.trim();
+    if (path == "(root)") return;
+    path = path.split("/");
+    chooser.load(path.slice(0, path.length - 1).join("/"));
+}
+
+//attached to #dir-template > .option
 function loadDir(e) {
-  //same o same o
-  const o = e.currentTarget;
-  const path = o.path;
-  chooser.load(path);
+    //i think o stands for 'option' but i'm not sure
+    const o = e.currentTarget;
+    const path = o.path;
+    chooser.load(path);
 }
 
-//el shows which dir is currently open
-const openDir = $("open-dir");
+//attached to #file-template > .option
+function loadFile(e) {
+    const o = e.currentTarget;
 
-//el holds the directories and files
-const chooser = $("chooser");
-chooser.load = async function (path, noHistory) {
-  //chooserInfo.textContent = "loading dir";
-  //removed this because it was just annoying
+    //don't load something that's already loaded
+    if (o.classList.contains("chosen")) return;
 
-  //push to history
-  if (!noHistory) newHistory(path == "" ? "" : path+'/');
+    content.load(o.path);
 
-  const resp = await fetch(
-    "https://api.github.com/repos/aucep/written/contents/" + path
-  );
+    //clear other .chosen and set this as .chosen
+    chooserFiles.removeChosen();
+    o.classList.add("chosen");
+}
 
-  //error yadda yadda (i wonder if this even catches anything)
-  //still not worth using promise syntax
-  if (!resp.ok) {
-    chooserInfo.textContent = "could not load dir";
-    return;
-  }
 
-  //to json
-  const dirContents = await resp.json();
-  //filter and fill
-  const files = dirContents.filter((f) => f.type == "file");
-  chooserFiles.populate(files);
-  const dirs = dirContents.filter((f) => f.type == "dir");
-  chooserDirs.populate(dirs);
+/*=================:
+:  BROWSER HISTORY :
+:=================*/
 
-  //update open-dir span
-  const openDirSpan = openDir.querySelector("span");
-  if (path == "") {
-    if (!openDir.classList.contains("root")) openDir.classList.add("root");
-    openDirSpan.textContent = "(root)";
-  } else {
-    openDir.classList.remove("root");
-    openDirSpan.textContent = path;
-  }
+//load directory/file from querystring
+async function loadQueryPath() {
+    let query = location.search;
+    if (query == "") chooser.load("", true);
+    //empty... you disappoint me
+    else {
+        //now THAT's what i'm talking about!
+        //remove ?/ or ? to get pure path
+        query = query.replace(/\?\/|\?/, "");
+        query = query.split("/");
 
-  //clear any
-  chooserInfo.textContent = "";
-};
+        //load directory no matter what
+        const path = query.length > 1 ? query.slice(0, query.length - 1).join("/") : "";
+        await chooser.load(path, true);
 
-//handle query string
-async function loadFromQueryString() {
-  let query = location.search;
-  if (query == "") chooser.load("",true);
-  //empty... you disappoint me
-  else {
-    //now THAT's what i'm talking about!
-    //remove ?/ or ?
-    query = query.replace(/\?\/|\?/, "");
-    query = query.split("/");
-    const last = query[query.length - 1];
-    if (last) content.load(query.join("/")); //if this is a file, load it
-    //load directory regardless
-    const path = query.length > 1 ? query.slice(0, query.length - 1).join("/") : "";
-    await chooser.load(path, true);
-
-    //update chosen
-    chooserFiles
-      .querySelectorAll(".chosen")
-      .forEach((o) => o.classList.remove("chosen"));
-    for (let file of chooserFiles.children) {
-      if (
-        file.lastElementChild.textContent == last &&
-        !file.classList.contains("chosen")
-      ) {
-        file.classList.add("chosen");
-        break;
-      }
+        //if this is a file, load it
+        const last = query[query.length - 1];
+        if (last) {
+            await content.load(query.join("/"));
+            //update chosen
+            chooserFiles.removeChosen();
+            Array.from(chooserFiles.children).find((f) => f.lastElementChild.textContent == last).classList.add("chosen");
+        }
+        /*for (let file of chooserFiles.children) {
+            if (
+                file.lastElementChild.textContent == last
+            ) {
+                file.classList.add("chosen");
+                break;
+            }
+        }*/
     }
-  }
 }
-
-//navigation
 
 //push a new history
 function newHistory(path) {
-  history.pushState(
-    null,
-    "",
-    window.location.origin + window.location.pathname + "?/" + path
-  );
+    history.pushState(
+        null,
+        "",
+        window.location.origin + window.location.pathname + "?/" + path
+    );
 }
-window.onpopstate = loadFromQueryString;
 
-//shorter stuff
+/*=======:
+:  MISC  :
+:=======*/
+
+function removeChildrenOf(el) {
+    while (el.lastChild) el.removeChild(el.lastChild);
+}
+
 function print() {
-  console.log(...arguments);
-  return arguments;
+    return console.log(...arguments)
 }
-function $(id) {
-  return document.getElementById(id);
-}
-/*
-function $$(q) {
-  return document.querySelector(q);
-}/*ok this is bullshit who closes their comments*/
 
-//fuckin finally
-loadFromQueryString();
+function $(id) {
+    return document.getElementById(id)
+}
+
+/*===============================:
+: LET'S FUCKING GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+:===============================*/
+//finally page init
+loadQueryPath();

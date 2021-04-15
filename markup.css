@@ -1,5 +1,5 @@
 /*
-obviously most of this was taken from 
+obviously this was taken from 
 https://github.com/12Me21/sbs2
 */
 .markup-root {
@@ -109,7 +109,7 @@ https://github.com/12Me21/sbs2
 .markup-root audio,
 .markup-root video {
     max-width: 100%;
-    max-height: 10vh;
+    max-height: 30vh;
     display: block;
     -webkit-transition: all 0.25s ease;
     transition: all 0.25s ease;
@@ -132,7 +132,7 @@ markup-root .youtube {
 .markup-root .youtube a {
     width: 320px;
     height: 180px;
-    max-height: 10vh;
+    max-height: 30vh;
     max-width: 17.778vh;
     display: inline-block;
     vertical-align: top;
